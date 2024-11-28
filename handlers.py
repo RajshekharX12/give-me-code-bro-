@@ -1,4 +1,4 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle, InputTextMessageContent
 from telegram.ext import CommandHandler, MessageHandler, InlineQueryHandler, CallbackQueryHandler, filters
 from utils import normalize_number
 
@@ -35,20 +35,25 @@ async def inline_query(update, context):
     """Handle inline queries for the bot."""
     query = update.inline_query.query.strip()
     if query:
-        normalized_number = normalize_number(query)
+        # Normalize the number
+        normalized_number = query.replace(" ", "").replace("+888", "")
+        if not normalized_number.startswith("888"):
+            normalized_number = "888" + normalized_number
 
         # Generate the Fragment.com link
         link = f"https://fragment.com/number/{normalized_number}"
 
-        # Create a result for the inline query
+        # Create the inline result
         result = InlineQueryResultArticle(
             id=normalized_number,
             title=f"Generate link for {normalized_number}",
-            input_message_content=f"⚡️ *Powered by @Rentt* ⚡️\nHere is your link for {normalized_number}: {link}",
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Open in Fragment", url=link)]]
+            input_message_content=InputTextMessageContent(
+                f"⚡️ *Powered by @Rentt* ⚡️\nHere is your link for {normalized_number}: {link}",
+                parse_mode="Markdown"
             ),
         )
+
+        # Respond to the query
         await update.inline_query.answer([result], cache_time=0)
 
 async def restart(update, context):
