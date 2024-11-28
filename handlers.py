@@ -16,19 +16,18 @@ async def process_number(update, context):
     user_input = update.message.text.strip()
     normalized_number = normalize_number(user_input)
 
-    # Generate the link
-    link = f"https://fragment.com/number/{normalized_number}"
+    # Generate the new link with "/code"
+    link = f"https://fragment.com/number/{normalized_number}/code"
 
     # Create buttons: "Open in Fragment" and "Use Again"
     button_link = InlineKeyboardButton("Open in Fragment", url=link)
     button_restart = InlineKeyboardButton("🔄 Use Again", callback_data="restart")
     reply_markup = InlineKeyboardMarkup([[button_link], [button_restart]])
 
+    # Only display the link
     await update.message.reply_text(
-        f"⚡️ *Powered by @Rentt* ⚡️\n"
-        f"Here is your link for `{normalized_number}`:\n{link}",
+        f"{link}",
         reply_markup=reply_markup,
-        parse_mode="Markdown",
     )
 
 async def inline_query(update, context):
@@ -40,16 +39,15 @@ async def inline_query(update, context):
         if not normalized_number.startswith("888"):
             normalized_number = "888" + normalized_number
 
-        # Generate the Fragment.com link
-        link = f"https://fragment.com/number/{normalized_number}"
+        # Generate the new link with "/code"
+        link = f"https://fragment.com/number/{normalized_number}/code"
 
         # Create the inline result
         result = InlineQueryResultArticle(
             id=normalized_number,
             title=f"Generate link for {normalized_number}",
             input_message_content=InputTextMessageContent(
-                f"⚡️ *Powered by @Rentt* ⚡️\nHere is your link for {normalized_number}: {link}",
-                parse_mode="Markdown"
+                f"{link}"
             ),
         )
 
