@@ -1,2 +1,4 @@
 python-telegram-bot==20.3
 python-dotenv
+transformers==4.33.0
+torch==2.0.1  # Required for running Hugging Face models
