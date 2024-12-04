@@ -38,6 +38,9 @@ async def inline_query(update, context):
     """Handle inline queries for both links and text."""
     query = update.inline_query.query.strip()
 
+    # Remove spaces from the query
+    query = query.replace(" ", "")
+
     if query in INLINE_TEXTS:
         # Inline query for text
         result = InlineQueryResultArticle(
@@ -47,7 +50,11 @@ async def inline_query(update, context):
         )
         await update.inline_query.answer([result], cache_time=0)
     elif query.isdigit():  # If the query is a number, generate a link
-        normalized_number = query.zfill(9)  # Ensure the number is 9 digits long
+        if query.startswith("888"):
+            normalized_number = query  # Use the number as-is if it already starts with '888'
+        else:
+            normalized_number = f"888{query.zfill(6)}"  # Prepend '888' and pad to ensure at least 6 digits
+
         link = f"https://fragment.com/number/{normalized_number}/code"
         result = InlineQueryResultArticle(
             id=normalized_number,
